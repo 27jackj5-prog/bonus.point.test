@@ -4,8 +4,109 @@
 
 <h1>Jaiden's Data Visualization Assessment</h1>
 
-<p>This is my Data Visualization Assessment.</p>
+<p>This is my Data Visualization Assessment.
+
+
+
+
+#see document for instructions
+import pandas as pd
+import matplotlib.pyplot as plt
+
+
+pdt = pd.read_csv("https://data.nola.gov/resource/bpzh-bryg.csv")
+print(pdt.columns)
+sp = pdt[["zcta5ce10", "sum_totpop"]]
+sd = sp.sort_values(by = "sum_totpop", ascending = False)
+print(sd)
+
+t5 = sd.head()
+plt.bar(t5['zcta5ce10'].astype(str), t5["sum_totpop"], color = "blue")
+plt.title("Top 5 Zip Codes by POP in New Orleans")
+plt.show()
+
+import plotly.express as px
+import pandas as pd
+from google.colab import files
+
+
+pdt = pd.read_csv("https://data.nola.gov/resource/bpzh-bryg.csv")
+bd = pd.read_csv("https://data.nola.gov/resource/hjcd-grvu.csv")
+
+print(pdt.columns)
+print(bd.columns)
+
+spd = pdt[["zcta5ce10", "sum_totpop"]]
+spd.rename(columns = {'zcta5ce10':'zip'}, inplace = True)
+spd['zip'] = spd['zip'].astype(str)
+sf['zip'] = sf['zip'].astype(str)
+freqs = bd.groupby('zip').count().reset_index()
+print(freqs.head())
+sf = freqs[['zip', 'businessname']]
+
+merged = pd.merge(spd, sf, on = 'zip', how = 'inner')
+merged = merged[merged['sum_totpop'] > 0]
+fig = px.treemap(
+    merged,
+    path = ['zip'],
+    values = 'sum_totpop',
+    color = 'businessname',
+    color_continuous_scale = 'blues',
+    title = 'Businesses by Zipcode In New Orleans'
+)
+
+fig.show()
+
+import pandas as pd
+import plotly.express as px
+import matplotlib.pyplot as plt
+import numpy as np
+
+bd = pd.read_csv('https://data.nola.gov/resource/hjcd-grvu.csv')
+print(bd.columns)
+freqs = bd.groupby('zip').count().reset_index()
+print(freqs.head())
+sf = freqs[['zip','businessname']]
+
+sbd = bd.drop_duplicates(subset = 'zip')
+sl = sbd[['zip', 'longitude', 'latitude']]
+
+merged = pd.merge(sf, sl, on = "zip", how = 'inner')
+
+fig = px.scatter_geo(
+    merged,
+    lon = 'longitude',
+    lat = 'latitude',
+    title = 'Businesses in the New Orleans',
+    size = 'businessname',
+    color = 'businessname',
+)
+
+fig.update_geos(
+    lonaxis_range = [-90.5, -89.5],
+    lataxis_range = [29.5, 30.5]
+)
+fig.show()
+
+import pandas as pd
+import plotly.express as px
+import matplotlib.pyplot as plt
+import numpy as np
+
+cd = pd.read_csv("https://data.nola.gov/resource/dhg4-3vbu.csv")
+cd = cd[cd["data_quality_grade"] > 0]
+cd = cd[cd["accuracy"] > 0]
+print(cd.columns)
+
+#data_quality_grade accuracy
+
+slope, intercept = np.polyfit(cd["accuracy"], cd["data_quality_grade"], 1)
+line = slope*np.array(cd["accuracy"]) + intercept
+
+plt.scatter(cd["accuracy"], cd["data_quality_grade"] , color = 'blue')
+plt.plot(cd["accuracy"], line, color='red', linestyle='dashed')
+plt.title('Accuacy vs Quality Grade')
+plt.show()</p>
 
 </body>
 </html>
-
